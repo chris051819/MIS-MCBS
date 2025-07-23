@@ -352,7 +352,12 @@ async def create_teacher(teacher: TeacherCreate):
 @api_router.get("/teachers", response_model=List[Teacher])
 async def get_teachers():
     teachers = await db.teachers.find().sort("created_at", -1).to_list(100)
-    return [Teacher(**teacher) for teacher in teachers]
+    result = []
+    for teacher_data in teachers:
+        if isinstance(teacher_data.get('hire_date'), str):
+            teacher_data['hire_date'] = datetime.fromisoformat(teacher_data['hire_date']).date()
+        result.append(Teacher(**teacher_data))
+    return result
 
 @api_router.get("/teachers/{teacher_id}", response_model=Teacher)
 async def get_teacher(teacher_id: str):
