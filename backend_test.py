@@ -45,13 +45,13 @@ class SchoolAPITester:
         url = f"{self.base_url}{endpoint}"
         try:
             if method.upper() == "GET":
-                response = self.session.get(url, params=params)
+                response = self.session.get(url, params=params, timeout=10)
             elif method.upper() == "POST":
-                response = self.session.post(url, json=data)
+                response = self.session.post(url, json=data, timeout=10)
             elif method.upper() == "PUT":
-                response = self.session.put(url, json=data)
+                response = self.session.put(url, json=data, timeout=10)
             elif method.upper() == "DELETE":
-                response = self.session.delete(url)
+                response = self.session.delete(url, timeout=10)
             else:
                 raise ValueError(f"Unsupported method: {method}")
             
