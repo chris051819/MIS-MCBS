@@ -74,7 +74,7 @@ class Student(BaseModel):
     
     @validator('email', pre=True, always=True)
     def validate_email(cls, v):
-        if v and '@' not in v:
+        if v and v.strip() and '@' not in v:
             raise ValueError('Invalid email format')
         return v
 
