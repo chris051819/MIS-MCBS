@@ -247,7 +247,15 @@ async def get_students(
         query["status"] = status
     
     students = await db.students.find(query).skip(skip).limit(limit).sort("created_at", -1).to_list(limit)
-    return [Student(**student) for student in students]
+    # Convert string dates back to date objects
+    result = []
+    for student_data in students:
+        if isinstance(student_data.get('date_of_birth'), str):
+            student_data['date_of_birth'] = datetime.fromisoformat(student_data['date_of_birth']).date()
+        if isinstance(student_data.get('enrollment_date'), str):
+            student_data['enrollment_date'] = datetime.fromisoformat(student_data['enrollment_date']).date()
+        result.append(Student(**student_data))
+    return result
 
 @api_router.get("/students/count")
 async def get_students_count(
