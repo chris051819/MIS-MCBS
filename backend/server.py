@@ -176,7 +176,7 @@ async def get_dashboard_stats():
     students_by_grade = {item["_id"]: item["count"] for item in grade_counts}
     
     # Recent enrollments (last 30 days)
-    thirty_days_ago = datetime.utcnow().date() - datetime.timedelta(days=30)
+    thirty_days_ago = datetime.utcnow().date() - timedelta(days=30)
     recent_enrollments = await db.students.count_documents({
         "enrollment_date": {"$gte": thirty_days_ago}
     })
