@@ -85,6 +85,16 @@ class Student(BaseModel):
         if v and v.strip() and '@' not in v:
             raise ValueError('Invalid email format')
         return v
+    
+    def dict(self, **kwargs):
+        """Override dict method to handle date serialization"""
+        data = super().dict(**kwargs)
+        # Convert date objects to strings for MongoDB
+        if isinstance(data.get('date_of_birth'), date):
+            data['date_of_birth'] = data['date_of_birth'].isoformat()
+        if isinstance(data.get('enrollment_date'), date):
+            data['enrollment_date'] = data['enrollment_date'].isoformat()
+        return data
 
 class StudentCreate(BaseModel):
     student_id: str
