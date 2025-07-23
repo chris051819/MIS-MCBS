@@ -304,10 +304,21 @@ async def update_student(student_id: str, student_update: StudentUpdate):
     
     update_data = student_update.dict(exclude_unset=True)
     if update_data:
+        # Convert date objects to strings for MongoDB
+        if 'date_of_birth' in update_data and isinstance(update_data['date_of_birth'], date):
+            update_data['date_of_birth'] = update_data['date_of_birth'].isoformat()
+        
         update_data["updated_at"] = datetime.utcnow()
         await db.students.update_one({"id": student_id}, {"$set": update_data})
     
     updated_student = await db.students.find_one({"id": student_id})
+    
+    # Convert string dates back to date objects
+    if isinstance(updated_student.get('date_of_birth'), str):
+        updated_student['date_of_birth'] = datetime.fromisoformat(updated_student['date_of_birth']).date()
+    if isinstance(updated_student.get('enrollment_date'), str):
+        updated_student['enrollment_date'] = datetime.fromisoformat(updated_student['enrollment_date']).date()
+    
     return Student(**updated_student)
 
 @api_router.delete("/students/{student_id}")
