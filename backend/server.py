@@ -364,6 +364,10 @@ async def get_teacher(teacher_id: str):
     teacher = await db.teachers.find_one({"id": teacher_id})
     if not teacher:
         raise HTTPException(status_code=404, detail="Teacher not found")
+    
+    if isinstance(teacher.get('hire_date'), str):
+        teacher['hire_date'] = datetime.fromisoformat(teacher['hire_date']).date()
+    
     return Teacher(**teacher)
 
 # Course CRUD Operations
