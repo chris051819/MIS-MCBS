@@ -135,6 +135,14 @@ class Teacher(BaseModel):
     hire_date: date = Field(default_factory=date.today)
     status: str = "active"
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    def dict(self, **kwargs):
+        """Override dict method to handle date serialization"""
+        data = super().dict(**kwargs)
+        # Convert date objects to strings for MongoDB
+        if isinstance(data.get('hire_date'), date):
+            data['hire_date'] = data['hire_date'].isoformat()
+        return data
 
 class TeacherCreate(BaseModel):
     teacher_id: str
