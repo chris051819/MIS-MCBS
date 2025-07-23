@@ -10,6 +10,14 @@ from typing import List, Optional
 import uuid
 from datetime import datetime, date, timedelta
 from enum import Enum
+import json
+
+# Custom JSON encoder for date objects
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, date):
+            return obj.isoformat()
+        return super().default(obj)
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
