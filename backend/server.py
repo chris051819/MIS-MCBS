@@ -287,6 +287,13 @@ async def get_student(student_id: str):
     student = await db.students.find_one({"id": student_id})
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
+    
+    # Convert string dates back to date objects
+    if isinstance(student.get('date_of_birth'), str):
+        student['date_of_birth'] = datetime.fromisoformat(student['date_of_birth']).date()
+    if isinstance(student.get('enrollment_date'), str):
+        student['enrollment_date'] = datetime.fromisoformat(student['enrollment_date']).date()
+    
     return Student(**student)
 
 @api_router.put("/students/{student_id}", response_model=Student)
